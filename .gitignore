@@ -1,0 +1,53 @@
+
+# Django-specific files
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+
+# Virtual Environment
+venv/
+
+# IDE-specific files (e.g., PyCharm)
+.idea/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+.coverage
+
+# Build and packaging
+.tox/
+.eggs/
+dist/
+build/
+*.egg-info/
+
+# Static files (if collected into a separate directory during deployment)
+# If your static files are collected into a 'staticfiles' directory, you might want to ignore it.
+*staticfiles/
+
+# Media files (user-uploaded files)
+media/
+
+# Logs
+logs/
+
+# Environment variables file
+.env
+.env.dev
+.env.prod
+
+#pytest
+.pytest_cache/
+
+# Celery beat schedule file
+*celerybeat-schedule
+
+*data.txt
+
+

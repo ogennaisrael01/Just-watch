@@ -1,4 +1,8 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import (
+    APIRouter, Depends, 
+    status, HTTPException, 
+    Request
+)
 from fastapi.encoders import jsonable_encoder
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,19 +12,21 @@ from src.apps.users.schemas import (
     RegisterSchema, LogInSchema
 )
 from src.apps.users.helpers import hash_password
-from src.apps.users.services import  UserService, JWTService
+from src.apps.users.services import  UserService
 from src.config.database.setup import get_db
 from src.apps.users.exceptions import (
     UserAlreadyExistsException,
     UserNotFoundException
 )
+from src.manage import limiter
 
 router = APIRouter(tags=["Auth"], prefix="/v1/auth")
 
 
 
 @router.post("/register/", status_code=status.HTTP_201_CREATED)
-async def register_user(data: RegisterSchema, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def register_user(request: Request, data: RegisterSchema, db: AsyncSession = Depends(get_db)):
     credentials = data.model_dump()
     password = credentials.get("password")
     credentials["password"] = await hash_password(password)
@@ -51,8 +57,9 @@ async def register_user(data: RegisterSchema, db: AsyncSession = Depends(get_db)
         "jwt_response": authenticate_user
     }
 
-@router.post("/login/", status=status.HTTP_200_OK)
-async def login_user(login_data: LogInSchema, db: AsyncSession = Depends(get_db)):
+@router.post("/login/", status_code=status.HTTP_200_OK)
+@limiter.limit("5/minute")
+async def login_user(request: Request, login_data: LogInSchema, db: AsyncSession = Depends(get_db)):
     credentials = login_data.model_dump()
     try:
         authenticate_user = await UserService.authenticate_user(user_credentials=credentials, db=db)

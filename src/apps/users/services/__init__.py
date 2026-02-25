@@ -1,5 +1,9 @@
-from .auth_service import AuthService
+
+from .jwt_services import JWTService
+from .user_services import UserService
+
 
 __all__ = [
-    "AuthService"
+    "JWTService",
+    "UserService"
 ]

@@ -1,7 +1,11 @@
 from src.config.database.setup import get_db
-from helpers import get_user_or_none
+from .helpers import get_user_or_none, authenticate_user
 from src.apps.users.models.auth_models import User
-from src.apps.users.exceptions import UserAlreadyExistsException
+from src.apps.users.exceptions import (
+    UserAlreadyExistsException, 
+    UserNotFoundException
+)
+from .jwt_services import JWTService
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,10 +21,42 @@ class UserService:
             raise ValueError("email and username cannot be empty")
         user = await get_user_or_none(email=email, username=username, db=db)
         if user:
-            raise UserAlreadyExistsException("User with email or username already exists")
+            raise UserAlreadyExistsException(
+                message="User already exists with the provided email or username",
+                code=400
+            )
         new_user = User(**user_credentials)
-        await db.add(new_user)
+        db.add(new_user)
         await db.commit()
-        await db.refresh()
+        await db.refresh(new_user)
 
         return new_user 
+
+    @staticmethod
+    async def authenticate_user(user_credentials: dict, db: AsyncSession = Depends(get_db)):
+        email, password = user_credentials.get("email"), user_credentials.get("password")
+        if email is None or password is None:
+            raise ValueError("password and email are required for login")
+        
+        user = await authenticate_user(email=email, password=password, db=db)
+        if not user:
+            raise UserNotFoundException(
+                message="Provided credentials are invalid",
+                errors="Invalid request",
+                code=404
+            )
+        user_id = str(user.user_id)
+        email = user.email
+        payload = {"sub": user_id, "email": email}
+        try:
+            encoded_secret = await JWTService.encode_secret_key(payload)
+        except Exception as e:
+            encoded_secret.message = f"Error creating JWT {e}"
+            encoded_secret.code = 400
+            encoded_secret.status = "failed"
+            raise e
+        else:
+            encoded_secret.message = f"Jwt Created Successfully"
+            encoded_secret.code = 200
+            encoded_secret.status = "success"
+        return encoded_secret

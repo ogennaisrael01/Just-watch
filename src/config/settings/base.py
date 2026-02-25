@@ -9,6 +9,10 @@ load_dotenv()
 class BaseSetting(BaseSettings):
     """ Developerment Setting """   
     DEBUG: bool
+    SECRET_KEY: str
+    ALGORITHM: str
+    EXPIRES_IN: int
+    REFRESH_LIFESPAN: int
     
     model_config = SettingsConfigDict(
         env_file=".env",

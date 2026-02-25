@@ -4,14 +4,13 @@ from passguard.rules.character import UppercaseRule, DigitRule
 from passguard import PasswordValidator
 
 from asyncio.log import logger
-from typing import Any
 
 import email_validator
 
 class AuthService:
     
     @staticmethod
-    async def password_policy():
+    def password_policy():
         policy = PasswordPolicy()
         policy.add_rule(MinLengthRule(min_length=12))
         policy.add_rule(UppercaseRule(severity="HIGH"))
@@ -20,19 +19,20 @@ class AuthService:
         return policy
 
     @staticmethod
-    async def password_validator(password):
-        policy = await AuthService.password_policy()
+    def password_validator(password):
+        policy = AuthService.password_policy()
 
         validator = PasswordValidator(policy=policy)
 
         result = validator.evaluate(password=password)
-        if result.valid():
-            logger.info(f"Result: {result.to_dict()}", exc_info=True)
-            return True
-        return False
+        if result.valid:
+            logger.info(f"Result: {result}", exc_info=True)
+            return {"valid": True, "message": result.issues}
+        logger.warning(f"Invalid password: {result}", exc_info=True)
+        return {"valid": False, "message": result.issues}
 
     @staticmethod
-    async def passwordmismatch(password: str, confirm_password: str):
+    def passwordmismatch(password: str, confirm_password: str):
         if password is None or confirm_password is None:
             return False
         
@@ -41,7 +41,7 @@ class AuthService:
         return True
 
     @staticmethod
-    async def validate_email(email: str) -> tuple[bool, str | None]:
+    def validate_email(email: str) -> tuple[bool, str | None]:
         try:
             valid_email = email_validator.validate_email(email, check_deliverability=True)
         except email_validator.EmailNotValidError as e:

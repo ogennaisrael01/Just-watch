@@ -1,6 +1,6 @@
 from sqlalchemy import (
     Column, Integer, 
-    String
+    String, LargeBinary
 )
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
@@ -14,12 +14,12 @@ class User(Base):
 
     __tablename__ = "user_account"
 
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),  primary_key=True, unique=True, index=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),  default=uuid.uuid4, primary_key=True, unique=True, index=True)
     email: Mapped[str] = mapped_column(String(), index=True, unique=True, nullable=False)
     username: Mapped[str] = mapped_column(String(), index=True, unique=True, nullable=False)
     first_name: Mapped[str] = mapped_column(String(), index=True)
     last_name: Mapped[str] = mapped_column(String(), index=True)
-    password: Mapped[str] = mapped_column(String(), nullable=False)
+    password: Mapped[bytes] = mapped_column(LargeBinary(), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(default=datetime.now(), onupdate=datetime.utcnow)

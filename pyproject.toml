@@ -5,12 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "aiosqlite>=0.22.1",
     "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
     "bcrypt>=5.0.0",
     "fastapi[standard]>=0.131.0",
+    "jwt>=1.4.0",
     "passguard[pydantic]>=0.1.0",
     "psycopg-binary>=3.3.3",
     "psycopg2-binary>=2.9.11",
+    "python-jose[cryptography]>=3.5.0",
     "requests>=2.32.5",
     "sqlalchemy>=2.0.46",
     "uvicorn>=0.41.0",

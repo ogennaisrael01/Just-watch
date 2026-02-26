@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import Request
 from fastapi.responses import Response
+from fastapi_cache.decorator import cache
 
 
 from src.apps.users.api.router import user_router
@@ -9,11 +10,19 @@ from src.exception_handler import rate_limit_exception_handler
 
 from slowapi.errors import RateLimitExceeded
 
-
+import time
 from . import manage
 
 app = manage.app
 limiter = manage.limiter
+
+
+@app.get('/slow')
+@cache(expire=60)
+def slow():
+    time.sleep(10)
+    return {"status": "success"}
+
 
 @app.get('/health', status_code=200)
 @limiter.limit("2/minute")

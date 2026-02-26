@@ -3,13 +3,17 @@ from .helpers import get_user_or_none, authenticate_user
 from src.apps.users.models.auth_models import User
 from src.apps.users.exceptions import (
     UserAlreadyExistsException, 
-    UserNotFoundException
+    UserNotFoundException,
+    JWTException
 )
 from .jwt_services import JWTService
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import Depends
+from fastapi.security.oauth2 import OAuth2PasswordBearer
+
+bearer_token = OAuth2PasswordBearer(tokenUrl="/login")
 
 class UserService:
 
@@ -19,8 +23,8 @@ class UserService:
 
         if email is None or username is None:
             raise ValueError("email and username cannot be empty")
-        user = await get_user_or_none(email=email, username=username, db=db)
-        if user:
+        found, _ = await get_user_or_none(email=email, username=username, db=db)
+        if found:
             raise UserAlreadyExistsException(
                 message="User already exists with the provided email or username",
                 code=400
@@ -60,3 +64,22 @@ class UserService:
             encoded_secret.code = 200
             encoded_secret.status = "success"
         return encoded_secret
+    
+    @staticmethod
+    async def get_current_user(token: str = Depends(bearer_token), db: AsyncSession = Depends(get_db)):
+
+        payload = await JWTService.decode_jwt_token(token=token)
+
+        sub, email  = payload.get("sub") , payload.get("email")
+        if sub is None or email is None:
+            raise JWTException(
+                message="Payload not found", errors="pk and email are required for successful authorization",
+                code=400
+            )
+        is_valid, user = await get_user_or_none(email=email, pk=sub, db=db)
+        if not is_valid:
+            raise UserNotFoundException(
+                message="User not found", errors="User not found with the provided credentials",
+                code=404
+            )
+        return user

@@ -5,7 +5,8 @@ from .exception_handler import (
     UnauthorizedAccessException,
     UserAlreadyExistsException,
     UserNotFoundException,
-    AuthenticationFailedException
+    AuthenticationFailedException,
+    JWTException
 )
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "UnauthorizedAccessException",
     "UserAlreadyExistsException",
     "UserNotFoundException",
-    "AuthenticationFailedException"
+    "AuthenticationFailedException",
+    "JWTException"
 ]

@@ -6,19 +6,26 @@ from src.config.database.setup import get_db
 from  src.apps.users.models.auth_models import User
 from src.apps.users.helpers import verify_hashed_password
 
+from uuid import UUID
+from functools import lru_cache
 
+
+@lru_cache()
 async def get_user_or_none(
         email: str | None = None, username: str | None = None, 
-        db: AsyncSession = Depends(get_db)
-    ) ->  bool:
+        pk: UUID | None = None, db: AsyncSession = Depends(get_db)
+    ) ->  tuple[bool, User | None]:
 
-    query = await db.execute(select(User).where((User.email == email) | (User.username == username)))
+    query = await db.execute(select(User).where(
+        (User.email == email) | (User.username == username) | (User.user_id == pk)
+        ))
     user = query.scalar_one_or_none()
     if user is None:
-        return False
-    return True
+        return False, user
+    return True, user
 
 
+@lru_cache()
 async def authenticate_user(
         email: str, password: str,
         db: AsyncSession = Depends(get_db)

@@ -2,6 +2,8 @@
 from fastapi.responses import JSONResponse
 from fastapi import Request
 
+
+
 class CustomException(Exception):
     def __init__(
             self, message: str | None = None, 
@@ -43,4 +45,7 @@ class UserAlreadyExistsException(CustomException):
     pass
 
 class UnauthorizedAccessException(CustomException):
+    pass
+
+class JWTException(CustomException):
     pass

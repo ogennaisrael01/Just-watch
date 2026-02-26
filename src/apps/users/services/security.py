@@ -12,6 +12,6 @@ async def verify_keys():
         raise ValueError("ALGORITHM is not set in the configuration.")
     if EXPIRES_IN is None:
         raise ValueError("EXPIRES_IN is not set in the configuration.")
-    if REFRESH_LIFESPAN:
+    if REFRESH_LIFESPAN is None:
         raise ValueError("REFRESH_LIFESPAN is not set in the configuration.")
     

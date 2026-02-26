@@ -4,6 +4,7 @@ from jose import jwt
 from datetime import datetime, timedelta
 
 from src.apps.users.schemas import JWTSchemaResponse
+from src.apps.users.exceptions import JWTException
 
 from .security import (
     verify_keys, SECRET_KEY, 
@@ -52,5 +53,23 @@ class JWTService:
         token_response = JWTSchemaResponse(**token_data)
         return token_response
         
+
+    @staticmethod
+    async def decode_jwt_token(token: str) -> dict:
+        if token is None:
+            raise JWTException(
+                message="Token not found", errors="Jwt token not found",
+                code=404
+            )
+        try:
+            payload = jwt.decode(token=token, key=SECRET_KEY, algorithms=[ALGORITHM])
+        except jose.JWTError as e:
+            raise JWTException(
+                message="Token Invalid", errors=f"Errors: {str(e)}",
+                code=400
+            )
+        return payload
+
+
 
             

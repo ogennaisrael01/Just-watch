@@ -4,8 +4,13 @@ from fastapi_cache.decorator import cache
 
 
 from src.apps.users.api.router import user_router
-from src.apps.movies.api.routers import movie_router
-from src.apps.users.exceptions.exception_handler import custom_exception_handler, CustomException
+from src.apps.movies.api.routers import (
+    movie_router, watchlist_router, 
+    rating_router
+)
+from src.apps.users.exceptions.exception_handler import (
+    custom_exception_handler, CustomException
+)
 from src.exception_handler import rate_limit_exception_handler
 
 from slowapi.errors import RateLimitExceeded
@@ -32,5 +37,7 @@ def health(request: Request):
 
 app.include_router(user_router)
 app.include_router(movie_router)
+app.include_router(watchlist_router)
+app.include_router(rating_router)
 app.add_exception_handler(CustomException, custom_exception_handler)
 app.add_exception_handler(RateLimitExceeded, rate_limit_exception_handler)

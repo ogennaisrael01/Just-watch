@@ -75,12 +75,12 @@ async def tmdb_movie_details( request: Request, movie_id: int,
     return jsonable_encoder(result)
 
 
-@router.delete("/movie/{movie_id}")
+@router.delete("/movie/{movie_id}", status_code=status.HTTP_200_OK)
 async def delete_saved_history(current_user: User = Depends(UserService.get_current_user), 
                                db: AsyncSession = Depends(get_db), movie_id: int = Path(...)):
     
     try:
-        result = MovieService.delete_search_history(
+        result = await MovieService.delete_search_history(
             current_user=current_user,
             movie_id=movie_id,
             db=db
@@ -91,9 +91,9 @@ async def delete_saved_history(current_user: User = Depends(UserService.get_curr
             detail=str(e)
         )
     
-    return status.HTTP_204_NO_CONTENT
+    return result
 
-@router.get("/search/history/", response_model=List[MovieSearchSchema])
+@router.get("/history/")
 @limiter.limit('10/munite')
 @cache(expire=60 * 5)
 async def list_search_history(
@@ -111,4 +111,4 @@ async def list_search_history(
             detail=str(e)
         )
     
-    return result
+    return {"status": "success", "result": result}

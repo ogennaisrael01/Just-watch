@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.apps.users.models.auth_models import User
 
@@ -27,5 +27,11 @@ class MovieSearchSchema(BaseModel):
 class WatchListSchema(BaseModel):
     movie_id: int
     owner_id: uuid.UUID
+
+
+class RatingSchema(BaseModel):
+    score: int = Field(ge=1, le=5)
+
+
 
     

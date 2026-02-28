@@ -19,7 +19,7 @@ async def run():
     url = "https://api.themoviedb.org/3"
     api_key = "a0d130f1658b6b75480aac43e2d52021"
 
-    response = requests.get(url=url + "/movie/58437", params={"api_key": api_key})
+    response = requests.get(url=url + "/recommendations/similar/58437", params={"api_key": api_key})
 
     response.raise_for_status()
     print(response.json())

@@ -2,7 +2,7 @@
 
 from .apps.users.models.auth_models import User
 from .config.database.base import Base
-from .apps.movies.models.movie_model import MovieSearch
+from .apps.movies.models.movie_model import MovieSearch, WatchList, Rate
 
 
 from fastapi import FastAPI

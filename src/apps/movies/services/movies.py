@@ -14,6 +14,7 @@ from .tmdb import get_movie_detail
 from fastapi import Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.encoders import jsonable_encoder
 
 
 class MovieService:
@@ -74,13 +75,10 @@ class MovieService:
                 errors="Failed to get user pk",
                 code=404
             )
-        
-        api_key, _ = await get_secret_base_url()
-
-        requests_params = {"api_key": api_key}
+        requests_params = {}
         if append_to_response is not None:
             requests_params.update({"append_to_response": append_to_response})
-
+    
         result = await get_movie_detail(movie_id=movie_id, query_params=requests_params)
         return_movie_id = result['id'] 
         found, _ = await check_movie_in_history(user_id=user_id, movie_id=return_movie_id, db=db)
@@ -101,10 +99,14 @@ class MovieService:
             movie_id=movie_id
         )
 
-        print("Movie", deleted_movie)
+        if not deleted_movie:
+            raise ValueError("Failed to deleted movie")
+        
+        if deleted_movie > 0:
+            return deleted_movie
 
     @staticmethod
     async def list_search_histories(current_user, db: AsyncSession = Depends(get_db)):
         histories = await list_history(db, current_user)
-        return histories
+        return [jsonable_encoder(history) for history in histories]
         

@@ -1,5 +1,5 @@
 from src.config.settings import base_setting
-from ..models.movie_model import MovieSearch, WatchList
+from ..models.movie_model import MovieSearch, WatchList, Rate
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -33,9 +33,20 @@ async def check_movie_in_history(user_id, movie_id: int, db: AsyncSession) -> tu
 async def check_movie_in_watchlist(user, movie_id, db: AsyncSession) -> bool:
     stmt = select(WatchList).where(WatchList.movie_id == movie_id, WatchList.owner == user)
 
-    query = await db.execute(query)
+    query = await db.execute(stmt)
 
     result = query.scalar_one_or_none()
     if result is None:
         return False
     return True
+
+async def check_rated_movie(current_user, movie_id: int, db: AsyncSession):
+    stmt = select(Rate).where((Rate.movie_id == movie_id), (Rate.owner == current_user))
+    query = await db.execute(stmt)
+
+    result = query.scalar_one_or_none()
+    if result is None:
+        return False
+    return True
+
+

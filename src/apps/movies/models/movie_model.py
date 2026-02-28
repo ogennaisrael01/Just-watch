@@ -2,6 +2,7 @@ from src.config.database.base import Base
 
 from sqlalchemy import (
     Integer, String, ForeignKey,
+    ARRAY
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from sqlalchemy.dialects.postgresql import UUID
@@ -18,7 +19,7 @@ class MovieSearch(Base):
     movie_title: Mapped[str] = mapped_column(String(), nullable=True, index=True)
     owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user_account.user_id"))
     release_date: Mapped[str] = mapped_column(String(), nullable=True, index=True) 
-    gerne_ids: Mapped[list] = mapped_column(List(), nullable=False, index=True)
+    genre_ids: Mapped[list] = mapped_column(ARRAY(Integer), nullable=False, index=True)
 
     poster_path: Mapped[str] = mapped_column(String(), nullable=True, index=True)
 

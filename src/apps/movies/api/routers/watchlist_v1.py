@@ -4,7 +4,8 @@ from fastapi_cache.decorator import cache
 from fastapi import (
     Request,  Depends, 
     Path, HTTPException, 
-    status, APIRouter, Query
+    status, APIRouter, Query,
+    Body
 )
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,7 +23,7 @@ router = APIRouter(
 @limiter.limit("10/minute")
 async def add_watchlist(
     request: Request, current_user: User =  Depends(UserService.get_current_user),
-    db: AsyncSession = Depends(get_db), movie_id: int = Path(...)):
+    db: AsyncSession = Depends(get_db), movie_id: int = Query(...)):
 
     try:
         result =  await WatchListService.add_movie_to_watchlist(

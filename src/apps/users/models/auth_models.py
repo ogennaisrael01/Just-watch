@@ -1,6 +1,6 @@
 from sqlalchemy import (
     Column, Integer, 
-    String, LargeBinary
+    String, LargeBinary, DateTime, func
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
@@ -21,12 +21,18 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(String(), index=True)
     password: Mapped[bytes] = mapped_column(LargeBinary(), nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(default=datetime.now(), onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), 
+        nullable=False)
+    
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), 
+        nullable=False, onupdate=func.now())
 
     movies_search = relationship("MovieSearch", cascade="all, delete", back_populates="owner")
     watchlist = relationship("WatchList", cascade="all, delete", back_populates="owner")
     ratings  = relationship("Rate", cascade="all, delete", back_populates="owner")
+    message = relationship("Message", cascade="all, delete", back_populates="owner")
     def __repr__(self):
         return f"User(user_id={self.user_id}, email={self.email}, username={self.username}, first_name={self.first_name}, last_name={self.last_name}, created_at={self.created_at})"
     

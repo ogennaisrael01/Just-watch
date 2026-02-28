@@ -13,7 +13,7 @@ async def save_history(db: AsyncSession,  result: dict, current_user):
                 owner_id=current_user.user_id,
                 release_date=result["release_date"],
                 poster_path=result['poster_path'],
-                gerne_ids=[gerne["id"] for gerne in result["genres"]],
+                genre_ids=[genre["id"] for genre in result["genres"]],
                 owner=current_user
             )
 

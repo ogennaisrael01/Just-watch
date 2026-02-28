@@ -4,12 +4,14 @@ from fastapi import (
     Request
 )
 from fastapi.encoders import jsonable_encoder
+from fastapi_cache.decorator import cache
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.apps.users.schemas import (
     RegistrationResponse, 
-    RegisterSchema, LogInSchema
+    RegisterSchema, LogInSchema,
+    UserProfileResponse
 )
 from src.apps.users.helpers import hash_password
 from src.apps.users.services import  UserService
@@ -18,6 +20,7 @@ from src.apps.users.exceptions import (
     UserAlreadyExistsException,
     UserNotFoundException
 )
+from src.apps.users.models.auth_models import User
 from src.manage import limiter
 
 router = APIRouter(tags=["Auth"], prefix="/v1/auth")
@@ -67,5 +70,32 @@ async def login_user(request: Request, login_data: LogInSchema, db: AsyncSession
         raise e
     jsonable_encoder(authenticate_user)
     return authenticate_user
+
+@router.get("/user-me/", status_code=status.HTTP_200_OK, response_model=None)
+@cache(expire=60 * 10)
+async def user_profile(
+    current_user: User = Depends(UserService.get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+
+    try:
+        user_profile = await UserService.get_current_user_profile(
+            current_user=current_user,
+            db=db
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    if current_user == 0:
+        result = current_user
+    else:
+        result = jsonable_encoder(user_profile)
+    
+    return {
+        "status": "success",
+        "result": UserProfileResponse(**result)
+    }
 
     

@@ -66,7 +66,7 @@ class UserService:
         return encoded_secret
     
     @staticmethod
-    async def get_current_user(token: str = Depends(bearer_token), db: AsyncSession = Depends(get_db)):
+    async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(bearer_token)):
 
         payload = await JWTService.decode_jwt_token(token=token)
 
@@ -82,4 +82,12 @@ class UserService:
                 message="User not found", errors="User not found with the provided credentials",
                 code=404
             )
+        return user
+
+    @staticmethod
+    async def get_current_user_profile(current_user, db: AsyncSession = Depends(get_db)):
+        found, user = await get_user_or_none(email=current_user.email, pk=current_user.user_id, db=db)
+
+        if not found:
+            return 0
         return user

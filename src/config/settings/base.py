@@ -15,6 +15,10 @@ class BaseSetting(BaseSettings):
     REFRESH_LIFESPAN: int
     TMDB_API_KEY: str
     BASE_URL: str
+    GEMINI_MODEL: str
+    GEMINI_API_KEY: str
+
+
     
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -1,11 +1,13 @@
 from .auth_schemas import (
     RegisterSchema, JWTSchemaResponse,
-    RegistrationResponse,  LogInSchema
+    RegistrationResponse,  LogInSchema,
+    UserProfileResponse
 )
 
 __all__ = [
     "RegisterSchema",
     "JWTSchemaResponse",
     "RegistrationResponse",
-    "LogInSchema"
+    "LogInSchema",
+    "UserProfileResponse"
 ]

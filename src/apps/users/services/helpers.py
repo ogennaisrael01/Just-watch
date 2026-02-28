@@ -1,4 +1,5 @@
 from fastapi import Depends
+from fastapi_cache.decorator import cache
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -21,7 +22,7 @@ async def get_user_or_none(
         ))
     user = query.scalar_one_or_none()
     if user is None:
-        return False, user
+        return False, None
     return True, user
 
 

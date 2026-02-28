@@ -91,7 +91,10 @@ async def delete_saved_history(current_user: User = Depends(UserService.get_curr
             detail=str(e)
         )
     
-    return result
+    return {
+        "status": "success",
+        'delete_row(s)': result
+    }
 
 @router.get("/history/")
 @limiter.limit('10/munite')

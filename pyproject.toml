@@ -12,6 +12,7 @@ dependencies = [
     "fastapi-cache>=0.1.0",
     "fastapi-cache2",
     "fastapi[standard]>=0.131.0",
+    "google-genai>=1.65.0",
     "jwt>=1.4.0",
     "passguard[pydantic]>=0.1.0",
     "psycopg-binary>=3.3.3",

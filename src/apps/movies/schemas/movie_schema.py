@@ -21,6 +21,7 @@ class MovieSearchSchema(BaseModel):
 
     release_date: str | None = None
     poster_path: str | None = None
+    genre_ids: list | None = None
 
     owner: Any
 

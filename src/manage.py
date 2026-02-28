@@ -1,6 +1,7 @@
 # load apps and declearative base
 
 from .apps.users.models.auth_models import User
+from .apps.users.models.message_model import Message
 from .config.database.base import Base
 from .apps.movies.models.movie_model import MovieSearch, WatchList, Rate
 

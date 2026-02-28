@@ -1,4 +1,5 @@
 from typing import Annotated
+import uuid
 
 from pydantic import (
     BaseModel, 
@@ -85,3 +86,12 @@ class JWTSchemaResponse(BaseResponse):
 
 class RegistrationResponse(BaseResponse):
     pass
+
+class UserProfileResponse(BaseModel):
+    user_id: uuid.UUID
+    email: str
+    first_name: str
+    updated_at: str
+    username: str
+    last_name: str
+    created_at: str

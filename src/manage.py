@@ -15,8 +15,6 @@ from slowapi import Limiter
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 
-
-
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -35,7 +33,6 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["10/minute"])
 app.state.limiter = limiter
 
 app.add_middleware(
-    SlowAPIMiddleware,
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -43,3 +40,6 @@ app.add_middleware(
     allow_methods=["*"]
 )
 
+app.add_middleware(
+    SlowAPIMiddleware
+)

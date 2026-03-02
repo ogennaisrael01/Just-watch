@@ -22,13 +22,6 @@ app = manage.app
 limiter = manage.limiter
 
 
-@app.get('/slow')
-@cache(expire=60)
-def slow():
-    time.sleep(10)
-    return {"status": "success"}
-
-
 @app.get('/health', status_code=200)
 @limiter.limit("2/minute")
 def health(request: Request):

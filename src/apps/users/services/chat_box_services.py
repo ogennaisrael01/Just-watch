@@ -11,6 +11,7 @@ from .crud import (
     delete_chat_history
 )
 from ..models.message_model import UserRole
+from .security import retry_on_failure
 
 class ChatBoxService:
     API_KEY = getattr(base_setting, "GEMINI_API_KEY")
@@ -21,7 +22,7 @@ class ChatBoxService:
         self.db = db
 
     @classmethod
-    async def  Verify_gemini_credentials(cls) -> tuple[str]:
+    async def  Verify_gemini_credentials(cls) -> tuple[str, str]:
         if cls.API_KEY is None:
             raise ValueError("API KEY Cannot be empty")
         
@@ -87,6 +88,7 @@ class ChatBoxService:
         print("MessageHistory", history)
         return history
     
+    @retry_on_failure
     async def chat_ai(self, message: str):
         api_key, model = await ChatBoxService.Verify_gemini_credentials()
 

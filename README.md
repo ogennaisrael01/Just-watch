@@ -8,8 +8,8 @@
 
 ## What It Does
 
-1. **User Management** — Registration, authentication (JWT via SimpleJWT), profile management, and account switching between child/guardian roles.
-2. **Movie Operations** — Browse, search, and filter movies by categories, difficulty levels, and age ranges.
+1. **User Management** — Registration, authentication (JWT via SimpleJWT), profile management.
+2. **Movie Operations** — Browse, search, and filter movies by title.
 3. **Watchlist Management** — Users can add/remove movies to personal watch-lists, track viewing progress.
 4. **Ratings & Reviews** — Users rate movies on a scale; ratings are stored and can influence recommendations.
 5. **Messaging** — Direct messaging between user and AI
@@ -22,7 +22,7 @@
 
 ### Authentication & User Roles
 - Custom User model
-- JWT token-based auth (SimpleJWT) with token blacklisting for logout
+- JWT token-based auth (JWT) 
 
 
 ### Movie Management

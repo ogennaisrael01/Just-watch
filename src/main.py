@@ -1,6 +1,7 @@
 from fastapi import Request
 from fastapi.responses import Response
 from fastapi_cache.decorator import cache
+from fastapi.responses import FileResponse
 
 
 from src.apps.users.api.router import user_router, chat_box_router
@@ -17,9 +18,16 @@ from slowapi.errors import RateLimitExceeded
 
 import time
 from . import manage
+import os
 
 app = manage.app
 limiter = manage.limiter
+
+favicon_path = os.path.join(os.path.dirname(__file__), "static", "favicon.ico")
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse(favicon_path)
 
 
 @app.get('/health', status_code=200)

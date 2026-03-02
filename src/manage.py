@@ -9,10 +9,12 @@ from .apps.movies.models.movie_model import MovieSearch, WatchList, Rate
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi.middleware.cors import CORSMiddleware
 
 from slowapi import Limiter
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
+
 
 
 from contextlib import asynccontextmanager
@@ -33,6 +35,11 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["10/minute"])
 app.state.limiter = limiter
 
 app.add_middleware(
-    SlowAPIMiddleware
+    SlowAPIMiddleware,
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_headers=["*"],
+    allow_methods=["*"]
 )
 

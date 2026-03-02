@@ -8,7 +8,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from src.config.database import Base
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class User(Base):
 
@@ -21,14 +21,18 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(String(), index=True)
     password: Mapped[bytes] = mapped_column(LargeBinary(), nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), 
-        nullable=False)
-    
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), 
-        nullable=False, onupdate=func.now())
+    created_at = mapped_column(
+        DateTime(timezone=True),
+        default=datetime.utcnow,
+        nullable=False
+    )
 
+    updated_at = mapped_column(
+        DateTime(timezone=True),
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False
+    )
     movies_search = relationship("MovieSearch", cascade="all, delete", back_populates="owner")
     watchlist = relationship("WatchList", cascade="all, delete", back_populates="owner")
     ratings  = relationship("Rate", cascade="all, delete", back_populates="owner")
@@ -39,4 +43,3 @@ class User(Base):
     @property
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
-    

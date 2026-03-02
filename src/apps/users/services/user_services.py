@@ -31,7 +31,9 @@ class UserService:
                 message="User already exists with the provided email or username",
                 code=400
             )
-        new_user = User(**user_credentials, created_at=datetime.now())
+        new_user = User(**user_credentials)
+
+        print(new_user.updated_at)
         db.add(new_user)
         await db.commit()
         await db.refresh(new_user)

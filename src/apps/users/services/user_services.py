@@ -13,6 +13,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 
+from datetime import datetime
+
 bearer_token = OAuth2PasswordBearer(tokenUrl="/login")
 
 class UserService:
@@ -29,7 +31,7 @@ class UserService:
                 message="User already exists with the provided email or username",
                 code=400
             )
-        new_user = User(**user_credentials)
+        new_user = User(**user_credentials, created_at=datetime.now())
         db.add(new_user)
         await db.commit()
         await db.refresh(new_user)

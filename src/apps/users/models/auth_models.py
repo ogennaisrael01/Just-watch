@@ -1,6 +1,5 @@
 from sqlalchemy import (
-    Column, Integer, 
-    String, LargeBinary, DateTime, func
+    String, LargeBinary, DateTime
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
@@ -21,13 +20,13 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(String(), index=True)
     password: Mapped[bytes] = mapped_column(LargeBinary(), nullable=False)
 
-    created_at = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.utcnow,
         nullable=False
     )
 
-    updated_at = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.utcnow,
         onupdate=datetime.utcnow,

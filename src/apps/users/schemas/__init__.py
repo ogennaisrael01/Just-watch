@@ -1,7 +1,7 @@
 from .auth_schemas import (
     RegisterSchema, JWTSchemaResponse,
     RegistrationResponse,  LogInSchema,
-    UserProfileResponse
+    UserProfileResponse, UserUpdate
 )
 
 __all__ = [
@@ -9,5 +9,6 @@ __all__ = [
     "JWTSchemaResponse",
     "RegistrationResponse",
     "LogInSchema",
-    "UserProfileResponse"
+    "UserProfileResponse",
+    "UserUpdate"
 ]

@@ -95,3 +95,8 @@ class UserProfileResponse(BaseModel):
     username: str
     last_name: str
     created_at: str
+
+class UserUpdate(BaseModel):
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None

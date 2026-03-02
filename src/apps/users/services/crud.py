@@ -3,7 +3,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 
 from src.apps.users.models.message_model import Message
+from src.apps.users.models.auth_models import User
+from .helpers import  get_user_or_none
 
+async def update_profile(current_user: User, db: AsyncSession, data: dict):
+    found, user = await get_user_or_none(
+        email=current_user.email,
+        pk=current_user.user_id,
+        db=db
+    )
+    if found:
+        for key, value in data.items():
+            setattr(user, key, value)
+        await  db.commit()
+    return  user
 
 async def save_message(current_user, message, user_role, db: AsyncSession):
     message_instance = Message(

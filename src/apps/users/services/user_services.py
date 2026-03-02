@@ -7,6 +7,7 @@ from src.apps.users.exceptions import (
     JWTException
 )
 from .jwt_services import JWTService
+from .crud import  update_profile
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -95,3 +96,15 @@ class UserService:
         if not found:
             return 0
         return user
+
+    @staticmethod
+    async  def update_current_user_profile(
+            current_user, db: AsyncSession = Depends(get_db),
+            update_credential: dict | None = None):
+
+        updated_user = await update_profile(
+            current_user=current_user,
+            db=db,
+            data=update_credential
+        )
+        return updated_user

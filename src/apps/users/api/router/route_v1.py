@@ -4,6 +4,7 @@ from fastapi import (
     Request
 )
 from fastapi.encoders import jsonable_encoder
+from fastapi.params import Body
 from fastapi_cache.decorator import cache
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.apps.users.schemas import (
     RegistrationResponse, 
     RegisterSchema, LogInSchema,
-    UserProfileResponse
+    UserProfileResponse,UserUpdate
 )
 from src.apps.users.helpers import hash_password
 from src.apps.users.services import  UserService
@@ -96,6 +97,37 @@ async def user_profile(
     return {
         "status": "success",
         "result": UserProfileResponse(**result)
+    }
+
+
+@router.patch("/user-me/", status_code=status.HTTP_200_OK)
+async  def update_user_profile(
+        current_user: User = Depends(UserService.get_current_user),
+        update_form: UserUpdate = Body(...),
+        db: AsyncSession = Depends(get_db)
+):
+    valid_credential = update_form.model_dump(exclude_unset=True)
+    if "email" in valid_credential:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Email can not be updated"
+        )
+    try:
+        update = await  UserService.update_current_user_profile(
+            current_user=current_user,
+            db=db,
+            update_credential=valid_credential
+        )
+    except  Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    result = jsonable_encoder(update)
+
+    return {
+        "status": "success",
+        "detail": UserProfileResponse(**result)
     }
 
     

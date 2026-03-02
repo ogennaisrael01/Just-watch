@@ -27,7 +27,7 @@ async def verify_keys():
 def retry_on_failure(func):
     @functools.wraps(func)
     async def wrapper(self, *args, **kwargs):
-        print("Funstion name",func.__name__)
+
         for i in range(1, int(max_retries)):
             try:
                 result = await func(self, *args, **kwargs)

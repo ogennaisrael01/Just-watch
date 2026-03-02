@@ -5,7 +5,11 @@ from sqlalchemy import delete
 
 import asyncio
 import requests
+import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 async def run():
@@ -16,8 +20,8 @@ async def run():
 
     # await db.close()
 
-    url = "https://api.themoviedb.org/3/"
-    api_key = "a0d130f1658b6b75480aac43e2d52021"
+    url = os.getenv("BASE_URL")
+    api_key = os.getenv("TMDB_API_KEY")
 
     response = requests.get(url=url + "discover/movie", params={'with_genres': "18,878,12,28,9648", 'sort_by': 'popularity.desc', 'api_key': 'a0d130f1658b6b75480aac43e2d52021'})
 

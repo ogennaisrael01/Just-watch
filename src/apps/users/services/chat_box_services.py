@@ -85,7 +85,6 @@ class ChatBoxService:
                 roles_and_parts['parts'].append({"texts": data["message"]})
             
             history.append(roles_and_parts)
-        print("MessageHistory", history)
         return history
     
     @retry_on_failure
@@ -103,7 +102,6 @@ class ChatBoxService:
             raise ValueError(f"Error While generating chat: {str(e)}")
 
         ai_response = response.text
-        print(ai_response)
         await self.save_ai_response_in_db(ai_response)
         await self.save_user_chat_in_db(message)
 

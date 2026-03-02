@@ -9,7 +9,7 @@ dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
     "bcrypt>=5.0.0",
-    "fastapi-cache2",
+    "fastapi-cache2>=0.2.2",
     "fastapi[standard]>=0.131.0",
     "google-genai>=1.65.0",
     "jwt>=1.4.0",

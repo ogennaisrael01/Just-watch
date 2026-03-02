@@ -20,7 +20,6 @@ async def ai_chat_box(
     message_data: MessageIn = Body(description="Message body"),
     db: AsyncSession = Depends(get_db)
 ):
-    
     message_dict = message_data.model_dump()
     message = message_dict["message"]
     try:

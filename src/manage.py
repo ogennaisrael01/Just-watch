@@ -7,9 +7,9 @@ from .apps.movies.models.movie_model import MovieSearch, WatchList, Rate
 
 
 from fastapi import FastAPI
-from fastapi_cache import F
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache import FastAPICache
 
 from slowapi import Limiter
 from slowapi.middleware import SlowAPIMiddleware

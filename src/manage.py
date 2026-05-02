@@ -5,7 +5,6 @@ from .apps.users.models.message_model import Message
 from .config.database.base import Base
 from .apps.movies.models.movie_model import MovieSearch, WatchList, Rate
 
-
 from fastapi import FastAPI
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi.middleware.cors import CORSMiddleware

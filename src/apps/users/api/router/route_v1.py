@@ -29,7 +29,7 @@ router = APIRouter(tags=["Auth"], prefix="/v1/auth")
 
 
 @router.post("/register/", status_code=status.HTTP_201_CREATED)
-@limiter.limit("5/minute")
+@limiter.limit("100/minute")
 async def register_user(request: Request, data: RegisterSchema, db: AsyncSession = Depends(get_db)):
     credentials = data.model_dump()
     password = credentials.get("password")
@@ -43,22 +43,14 @@ async def register_user(request: Request, data: RegisterSchema, db: AsyncSession
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
                             detail=f"Error creating user: {str(e)}")
-    else:
-        registration_success = RegistrationResponse(
-            status="success",
-            message="Registration succeded with no errors.",
-            code=201
-        )
 
-    if registration_success.status == "success":
+    if user:
+        # provide access token to user
         auth_credentials = {"email": user.email, "password": password}
         authenticate_user = await UserService.authenticate_user(user_credentials=auth_credentials, db=db)
-        jsonable_encoder(authenticate_user)
-    jsonable_encoder(registration_success)
-    
     return {
-        "registration_response": registration_success,
-        "jwt_response": authenticate_user
+        "success": True, 
+        "details": authenticate_user
     }
 
 @router.post("/login/", status_code=status.HTTP_200_OK)

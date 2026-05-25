@@ -17,6 +17,8 @@ class BaseSetting(BaseSettings):
     BASE_URL: str
     GEMINI_MODEL: str
     GEMINI_API_KEY: str
+    TOKEN_MIX_MODEL: str
+    TOKEN_MIX_API_KEY: str
 
 
     

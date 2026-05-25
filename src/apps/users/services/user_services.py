@@ -48,7 +48,7 @@ class UserService:
         user = await authenticate_user(email=email, password=password, db=db)
         if not user:
             raise UserNotFoundException(
-                message="Provided credentials are invalid",
+                message="Invalid Credentials provided",
                 errors="Invalid request",
                 code=404
             )

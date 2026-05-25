@@ -34,8 +34,6 @@ def retry_on_failure(func):
                 return result
             except Exception as e:
                 logger.error(f"Attempt {i} failed with error: {e}")
-                await asyncio.sleep(2)  
-
-                if i > max_retries:
-                    raise  ValueError(f"Max Attempts Exceeded, Error: {e}")
+            if i > max_retries:
+                raise  ValueError(f"Max Attempts Exceeded, Error: {e}")
     return wrapper

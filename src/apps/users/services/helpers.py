@@ -33,7 +33,9 @@ async def authenticate_user(
 ):
     stmt = select(User).where(User.email==email)
     query = await db.execute(stmt)
-    user = query.scalar_one()
+    user = query.scalar_one_or_none()
+    if not user:
+        return False
     hashed_password = user.password
     is_valid_password = await verify_hashed_password(password, hashed_password)
     if is_valid_password:

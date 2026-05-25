@@ -23,17 +23,16 @@ async def save_message(current_user, message, user_role, db: AsyncSession):
         user_id=current_user.user_id, 
         user_role=user_role, message=message
         )
-    db.add(message)
+    
+    db.add(message_instance)
     await db.commit()
     await db.refresh(message_instance)
     return message_instance
 
 async def retreive_messages(current_user, db: AsyncSession):
-    stmt = select(Message).where((Message.user_id == current_user.user_id))
+    stmt = select(Message).where((Message.user_id == current_user.user_id)).order_by(Message.created_at.desc())
     query = await db.execute(stmt)
-
-    # fetch only the latest 10 messages
-    result = query.scalars().fetchall()[:10]
+    result = query.scalars().fetchall()
 
     if result is None:
         return False

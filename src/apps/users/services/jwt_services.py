@@ -40,7 +40,7 @@ class JWTService:
         if expired_in is not None:
             exp = datetime.now() + timedelta(minutes=expired_in)
         else:
-            exp = datetime.now() + timedelta(minutes=EXPIRES_IN)
+            exp = datetime.now() + timedelta(days=REFRESH_LIFESPAN)
         payload_copy.update({"exp": exp})
         token_data = {}
         for token in tokens:

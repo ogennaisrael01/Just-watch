@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Depends, HTTPException, Body, Request, Query
-
+from fastapi.responses import StreamingResponse
 from .route_v1 import limiter, cache, UserService, User, get_db
 from src.apps.users.schemas.message_schemas import MessageIn
 from src.apps.users.services.chat_box_services import ChatBoxService
@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/chat-box/", status_code=status.HTTP_200_OK)
+@router.post("/chats/", status_code=status.HTTP_200_OK)
 @limiter.limit('5/hour')
 async def ai_chat_box(
     request: Request,
@@ -27,21 +27,15 @@ async def ai_chat_box(
             current_user=current_user, 
             db=db
         )
-
-        response_ai = await message_instance.chat_ai(message=message)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
-        )
-
-    return {
-        "status": "success",
-        "result": response_ai
-    }
+        )   
+    return StreamingResponse(message_instance.chat_ai(message), media_type="text/plain")
 
 
-@router.get("/chat-box/chats/", status_code=status.HTTP_200_OK)
+@router.get("/chats/", status_code=status.HTTP_200_OK)
 @limiter.limit('10/minute')
 @cache(expire=60 * 5)
 async def ai_chat_box(

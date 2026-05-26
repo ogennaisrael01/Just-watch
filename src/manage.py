@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 
 from slowapi import Limiter
-from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 
 from contextlib import asynccontextmanager
@@ -39,6 +38,3 @@ app.add_middleware(
     allow_methods=["*"]
 )
 
-app.add_middleware(
-    SlowAPIMiddleware
-)

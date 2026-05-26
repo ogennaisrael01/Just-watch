@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, HTTPException, Body, Request, Query
+from fastapi import APIRouter, status, Depends, HTTPException, Body, Request, Query, BackgroundTasks
 from fastapi.responses import StreamingResponse
 from .route_v1 import limiter, cache, UserService, User, get_db
 from src.apps.users.schemas.message_schemas import MessageIn
@@ -16,6 +16,7 @@ router = APIRouter(
 @limiter.limit('5/hour')
 async def ai_chat_box(
     request: Request,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(UserService.get_current_user),
     message_data: MessageIn = Body(description="Message body"),
     db: AsyncSession = Depends(get_db)
@@ -32,7 +33,7 @@ async def ai_chat_box(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )   
-    return StreamingResponse(message_instance.chat_ai(message), media_type="text/plain")
+    return StreamingResponse(message_instance.chat_ai(message, background_tasks), media_type="text/event-stream")
 
 
 @router.get("/chats/", status_code=status.HTTP_200_OK)

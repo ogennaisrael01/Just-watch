@@ -85,42 +85,34 @@ class ChatBoxService:
         return history
     
     # @retry_on_failure
-    async def chat_ai(self, message: str):
+    from fastapi import BackgroundTasks
+
+    async def chat_ai(self, message: str, background_tasks: BackgroundTasks):
         await self.save_user_chat_in_db(message=message)
-        from fastapi import HTTPException
         api_key, model = await ChatBoxService.Verify_gemini_credentials()
 
         history = await self.history_for_AI()
         history.append({"role": "user", "content": message})
 
+        full_ai_response = []
+
         try:
             client = AsyncOpenAI(api_key=api_key, base_url="https://api.tokenmix.ai/v1")
-            response = await client.chat.completions.create(model=model, messages=history, stream=True, max_tokens=1024)
-    
+            response = await client.chat.completions.create(
+                model=model,
+                messages=history,
+                stream=True,
+                max_tokens=1024
+            )
+
             async for chunk in response:
-                content = chunk.choices[0].delta.content.encode("utf-8")
-                if content:
-                    await self.save_ai_response_in_db(message=content)
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content = chunk.choices[0].delta.content
+                    full_ai_response.append(content)
                     yield content
-
         except Exception as e:
-            yield f"\n[API Error: Details: {str(e)}]"
-
-        
-      
-
-
-
-
-
-        
-
-
-    
-
-
-
-
-
-
-
+            yield f"\n[API Error: {str(e)}]"
+        finally:
+            final_text = "".join(full_ai_response)
+            if final_text:
+                background_tasks.add_task(self.save_ai_response_in_db, message=final_text)
